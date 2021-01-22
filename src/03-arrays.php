@@ -90,12 +90,15 @@ function groupByTag(array $input)
     // The value with the key 'tags'
     // becomes the keys of the resulting array
     foreach ($input as $key => $item) {
-        foreach ($item['tags'] as $tag) {
-            // Add a new name element to the result
-            if (array_key_exists($tag, $result)) {
-                array_push($result[$tag], $item['name']);
-            } else {
-                $result[$tag] = [$item['name']];
+        // check if the required keys are in the array
+        if (array_key_exists('tags', $item) && array_key_exists('name', $item)) {
+            foreach ($item['tags'] as $tag) {
+                // Add a new name element to the result
+                if (array_key_exists($tag, $result)) {
+                    array_push($result[$tag], $item['name']);
+                } else {
+                    $result[$tag] = [$item['name']];
+                }
             }
         }
     }
