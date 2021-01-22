@@ -6,21 +6,23 @@
  * Throw InvalidArgumentException if $minute is negative of greater then 60.
  * @see https://www.php.net/manual/en/class.invalidargumentexception.php
  *
- * @param  int  $minute
+ * @param int $minute
  * @return string
  * @throws InvalidArgumentException
  */
 function getMinuteQuarter(int $minute)
 {
-    if($minute < 0 || $minute > 59){
-        throw new InvalidArgumentException('getMinuteQuarter function only accepts integers 0..59. Input was: '.$minute);
-    }elseif ($minute > 0 && $minute <= 15){
+    // Depending on the value of the input parameter, form the result
+    if ($minute < 0 || $minute > 59) {
+        throw new InvalidArgumentException
+        ('getMinuteQuarter function only accepts integers 0..59. Input was: ' . $minute);
+    } elseif ($minute > 0 && $minute <= 15) {
         return "first";
-    }elseif ($minute > 15 && $minute <= 30){
+    } elseif ($minute > 15 && $minute <= 30) {
         return "second";
-    }elseif ($minute > 30 && $minute <= 45){
+    } elseif ($minute > 30 && $minute <= 45) {
         return "third";
-    }elseif (($minute > 45 && $minute < 60) || $minute === 0){
+    } elseif (($minute > 45 && $minute < 60) || $minute === 0) {
         return "fourth";
     }
 }
@@ -32,16 +34,22 @@ function getMinuteQuarter(int $minute)
  * @see https://en.wikipedia.org/wiki/Leap_year
  * @see https://www.php.net/manual/en/class.invalidargumentexception.php
  *
- * @param  int  $year
+ * @param int $year
  * @return boolean
  * @throws InvalidArgumentException
  */
 function isLeapYear(int $year)
 {
-    if($year < 1900){
-        throw new InvalidArgumentException('isLeapYear function only accepts integers >= 1900. Input was: '.$year);
+    // If the year is less than 1900 then return an InvalidArgumentException
+    if ($year < 1900) {
+        throw new InvalidArgumentException
+        ('isLeapYear function only accepts integers >= 1900. Input was: ' . $year);
     }
+
+    // Check if the year is a leap year
     $leap = date('L', mktime(0, 0, 0, 1, 1, $year));
+
+    // Return the result
     return (boolean)$leap;
 }
 
@@ -52,19 +60,28 @@ function isLeapYear(int $year)
  * Throw InvalidArgumentException if $input contains more then 6 digits.
  * @see https://www.php.net/manual/en/class.invalidargumentexception.php
  *
- * @param  string  $input
+ * @param string $input
  * @return boolean
  * @throws InvalidArgumentException
  */
 function isSumEqual(string $input)
 {
-    if($input < 100000 || $input > 999999){
-        throw new InvalidArgumentException('isSumEqual function only accepts integers 100000..999999. Input was: '.$input);
+    // Convert string to number
+    $number = (int)$input;
+
+    // Convert the string to a character array
+    $str = str_split($input);
+
+    // If the argument is not a six-digit number, then return an InvalidArgumentException
+    if ($number < 100000 || $number > 999999 || count($str) != 6) {
+        throw new InvalidArgumentException
+        ('isSumEqual function only accepts a six-digit integers. Input was: ' . $input);
     }
-    $str = (string) $input;
-    if(((int)$str[0]+(int)$str[1]+(int)$str[2]) === ((int)$str[3]+(int)$str[4]+(int)$str[5])){
+
+    // If the sum of the first three digits is equal to the sum of the last three, then return true otherwise false
+    if (((int)$str[0] + (int)$str[1] + (int)$str[2]) === ((int)$str[3] + (int)$str[4] + (int)$str[5])) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
