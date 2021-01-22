@@ -14,16 +14,17 @@ function getMinuteQuarter(int $minute)
 {
     // Depending on the value of the input parameter, form the result
     if ($minute < 0 || $minute > 59) {
-        throw new InvalidArgumentException
-        ('getMinuteQuarter function only accepts integers 0..59. Input was: ' . $minute);
+        throw new InvalidArgumentException (
+            'getMinuteQuarter function only accepts integers 0..59. Input was: ' . $minute
+        );
     } elseif ($minute > 0 && $minute <= 15) {
-        return "first";
+        return 'first';
     } elseif ($minute > 15 && $minute <= 30) {
-        return "second";
+        return 'second';
     } elseif ($minute > 30 && $minute <= 45) {
-        return "third";
+        return 'third';
     } elseif (($minute > 45 && $minute < 60) || $minute === 0) {
-        return "fourth";
+        return 'fourth';
     }
 }
 
@@ -42,8 +43,9 @@ function isLeapYear(int $year)
 {
     // If the year is less than 1900 then return an InvalidArgumentException
     if ($year < 1900) {
-        throw new InvalidArgumentException
-        ('isLeapYear function only accepts integers >= 1900. Input was: ' . $year);
+        throw new InvalidArgumentException (
+            'isLeapYear function only accepts integers >= 1900. Input was: ' . $year
+        );
     }
 
     // Check if the year is a leap year
@@ -74,14 +76,11 @@ function isSumEqual(string $input)
 
     // If the argument is not a six-digit number, then return an InvalidArgumentException
     if ($number < 100000 || $number > 999999 || count($str) != 6) {
-        throw new InvalidArgumentException
-        ('isSumEqual function only accepts a six-digit integers. Input was: ' . $input);
+        throw new InvalidArgumentException (
+            'isSumEqual function only accepts a six-digit integers. Input was: ' . $input
+        );
     }
 
     // If the sum of the first three digits is equal to the sum of the last three, then return true otherwise false
-    if (((int)$str[0] + (int)$str[1] + (int)$str[2]) === ((int)$str[3] + (int)$str[4] + (int)$str[5])) {
-        return true;
-    } else {
-        return false;
-    }
+    return (((int)$str[0] + (int)$str[1] + (int)$str[2]) === ((int)$str[3] + (int)$str[4] + (int)$str[5]));
 }
