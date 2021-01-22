@@ -9,13 +9,24 @@
  */
 function snakeCaseToCamelCase(string $input)
 {
+    // If the string is empty then return it
     if($input === '') {
         return $input;
     }
+
+    // We split the string into an array of words
     $words = explode('_', $input);
+
+    // The first word does not need to be changed, save it
     $firstWord = $words[0];
+
+    // All words are capitalized
     $words = array_map( 'ucfirst', $words);
+
+    // First word unchanged
     $words[0] = $firstWord;
+
+    // Convert the array to a string and return it
     return implode ( $words );
 }
 
@@ -29,12 +40,21 @@ function snakeCaseToCamelCase(string $input)
  */
 function mirrorMultibyteString(string $input)
 {
+    // We split the string into an array of words
     $words = mb_split(' ', $input);
+
+    // Form the resulting string
     $ans = '';
+
+    // Reverse all multibyte strings
     foreach ($words as $word){
         $ans .= mb_strrev($word).' ';
     }
+
+    // Remove extra spaces
     $ans = trim($ans);
+
+    // Return the resulting string
     return $ans;
 }
 
@@ -54,23 +74,45 @@ function mirrorMultibyteString(string $input)
  */
 function getBrandName(string $noun)
 {
+    // Compare the first and last letters
     if(substr($noun, 0, 1) === substr($noun, -1, 1)){
+        // If they are equal, then duplicate the word
+        // (the second word without the first letter)
+        // and write the resulting word with a capital letter.
         return ucfirst($noun.substr($noun, 1));
     }else{
+        // If they are not equal,
+        // then add an article and write the word with a capital letter
         return "The ".ucfirst($noun);
     }
 }
 
+/**
+ * Helper function to reverse a multibyte string
+ *
+ * @param  string  $string
+ * @param  string  $encoding
+ * @return string
+ */
 function mb_strrev ($string, $encoding = null) {
+
+    // Check if the encoding is set
     if ($encoding === null) {
         $encoding = mb_detect_encoding($string);
     }
 
+    // Find out the length of the string, taking into account the encoding
     $length   = mb_strlen($string, $encoding);
+
+    // Form the resulting string
     $reversed = '';
+
+    // Starting from the end,
+    // read the characters and add them to the resulting string
     while ($length-- > 0) {
         $reversed .= mb_substr($string, $length, 1, $encoding);
     }
 
+    // Return the resulting string
     return $reversed;
 }
