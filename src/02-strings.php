@@ -4,13 +4,13 @@
  * Transform it into camel cased string and return (i.e. helloWorld or thisIsHomeTask)
  * @see http://xahlee.info/comp/camelCase_vs_snake_case.html
  *
- * @param  string  $input
+ * @param string $input
  * @return string
  */
 function snakeCaseToCamelCase(string $input)
 {
     // If the string is empty then return it
-    if($input === '') {
+    if ($input === '') {
         return $input;
     }
 
@@ -21,13 +21,13 @@ function snakeCaseToCamelCase(string $input)
     $firstWord = $words[0];
 
     // All words are capitalized
-    $words = array_map( 'ucfirst', $words);
+    $words = array_map('ucfirst', $words);
 
     // First word unchanged
     $words[0] = $firstWord;
 
     // Convert the array to a string and return it
-    return implode ( $words );
+    return implode($words);
 }
 
 /**
@@ -35,7 +35,7 @@ function snakeCaseToCamelCase(string $input)
  * Mirror each word individually and return transformed text (i.e. 'АВЫФ ждло')
  * !!! do not change words order
  *
- * @param  string  $input
+ * @param string $input
  * @return string
  */
 function mirrorMultibyteString(string $input)
@@ -47,8 +47,8 @@ function mirrorMultibyteString(string $input)
     $ans = '';
 
     // Reverse all multibyte strings
-    foreach ($words as $word){
-        $ans .= mb_strrev($word).' ';
+    foreach ($words as $word) {
+        $ans .= mb_strrev($word) . ' ';
     }
 
     // Remove extra spaces
@@ -69,32 +69,33 @@ function mirrorMultibyteString(string $input)
  * europe -> Europeurope
  * Implement this logic.
  *
- * @param  string  $noun
+ * @param string $noun
  * @return string
  */
 function getBrandName(string $noun)
 {
     // Compare the first and last letters
-    if(substr($noun, 0, 1) === substr($noun, -1, 1)){
+    if (substr($noun, 0, 1) === substr($noun, -1, 1)) {
         // If they are equal, then duplicate the word
         // (the second word without the first letter)
         // and write the resulting word with a capital letter.
-        return ucfirst($noun.substr($noun, 1));
-    }else{
+        return ucfirst($noun . substr($noun, 1));
+    } else {
         // If they are not equal,
         // then add an article and write the word with a capital letter
-        return "The ".ucfirst($noun);
+        return "The " . ucfirst($noun);
     }
 }
 
 /**
  * Helper function to reverse a multibyte string
  *
- * @param  string  $string
- * @param  string  $encoding
+ * @param string $string
+ * @param string $encoding
  * @return string
  */
-function mb_strrev ($string, $encoding = null) {
+function mb_strrev($string, $encoding = null)
+{
 
     // Check if the encoding is set
     if ($encoding === null) {
@@ -102,7 +103,7 @@ function mb_strrev ($string, $encoding = null) {
     }
 
     // Find out the length of the string, taking into account the encoding
-    $length   = mb_strlen($string, $encoding);
+    $length = mb_strlen($string, $encoding);
 
     // Form the resulting string
     $reversed = '';
