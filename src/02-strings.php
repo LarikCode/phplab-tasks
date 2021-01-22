@@ -10,7 +10,7 @@
 function snakeCaseToCamelCase(string $input)
 {
     // If the string is empty then return it
-    if ($input === '') {
+    if (empty($input)) {
         return $input;
     }
 
