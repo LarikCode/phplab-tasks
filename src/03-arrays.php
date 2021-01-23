@@ -35,27 +35,17 @@ function repeatArrayValues(array $input)
  */
 function getUniqueValue(array $input)
 {
-    // If the array is empty then return 0
-    if (empty($input)) return 0;
+    // Sort the input array
+    sort($input);
 
-    // Formation of the result
-    $result = null;
-    $key_last = array_key_last($input);
+    // Count the number of occurrences of each item
+    $countValue = array_count_values($input);
 
-    // Compare each element with others
-    foreach ($input as $key1 => $value1) {
-        foreach ($input as $key2 => $value2) {
-            // If the element is not unique, go to the next
-            if ($input[$key1] === $input[$key2] && $key1 != $key2) break 1;
-            // If the element is the smallest of the unique ones, then save it
-            if ($key2 === $key_last && (is_null($result) || $result > $input[$key1])) {
-                $result = $input[$key1];
-            }
-        }
-    }
+    // Sort by value keeping keys
+    asort($countValue);
 
-    // If the result is empty return 0, else return the result
-    return is_null($result) ? 0 : $result;
+    // If the first value is 1, then the key is the smallest unique element
+    return (!empty($countValue) && $countValue[array_key_first($countValue)] === 1) ? array_key_first($countValue) : 0;
 }
 
 /**
