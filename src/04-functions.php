@@ -35,9 +35,13 @@ function sayHelloArgument($arg)
  */
 function sayHelloArgumentWrapper($arg)
 {
-    // put your code here
-
-    return sayHelloArgument($arg);
+    if(is_numeric($arg) || is_string($arg) || is_bool($arg)){
+        return sayHelloArgument($arg);
+    }else{
+        throw new InvalidArgumentException (
+            'sayHelloArgumentWrapper function only accepts a number, string or bool. Input was: ' . gettype($arg)
+        );
+    }
 }
 
 /**
