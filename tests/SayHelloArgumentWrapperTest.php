@@ -21,7 +21,8 @@ class SayHelloArgumentWrapperTest extends TestCase
             [['Tom']],
             [['John']],
             [[['Hello'],['world']]],
-            [function(){return 0;}]
+            [function(){return 0;}],
+            [null]
         ];
     }
 }
