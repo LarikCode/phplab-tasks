@@ -3,12 +3,26 @@ require_once './functions.php';
 
 $airports = require './airports.php';
 
+const LENGTH = 5;
+$currentPage = $_GET['page'] ?? 1;
+
 // Filtering
 /**
  * Here you need to check $_GET request if it has any filtering
  * and apply filtering by First Airport Name Letter and/or Airport State
  * (see Filtering tasks 1 and 2 below)
  */
+if (key_exists('filter_by_first_letter', $_GET)) {
+    $airports = array_filter($airports, function ($item) {
+        return substr($item['name'], 0, 1) === $_GET['filter_by_first_letter'];
+    });
+}
+
+if (key_exists('filter_by_state', $_GET)) {
+    $airports = array_filter($airports, function ($item) {
+        return $item['state'] === $_GET['filter_by_state'];
+    });
+}
 
 // Sorting
 /**
@@ -16,6 +30,14 @@ $airports = require './airports.php';
  * and apply sorting
  * (see Sorting task below)
  */
+if (key_exists('sort', $_GET)) {
+    usort($airports, function ($item1, $item2) {
+        if ($item1[$_GET['sort']] === $item2[$_GET['sort']]) {
+            return 0;
+        }
+        return ($item1[$_GET['sort']] < $item2[$_GET['sort']]) ? -1 : 1;
+    });
+}
 
 // Pagination
 /**
@@ -23,6 +45,10 @@ $airports = require './airports.php';
  * and apply pagination logic
  * (see Pagination task below)
  */
+$countPages = ceil(count($airports) / LENGTH);
+
+$airports = array_slice($airports, ($currentPage - 1) * LENGTH, LENGTH);
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -32,7 +58,8 @@ $airports = require './airports.php';
     <meta name="description" content="">
     <title>Airports</title>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 <body>
 <main role="main" class="container">
@@ -53,7 +80,7 @@ $airports = require './airports.php';
         Filter by first letter:
 
         <?php foreach (getUniqueFirstLetters(require './airports.php') as $letter): ?>
-            <a href="#"><?= $letter ?></a>
+            <a href="/?<?= http_build_query(['filter_by_first_letter' => $letter, 'page' => '1'] + $_GET) ?>"><?= $letter ?></a>
         <?php endforeach; ?>
 
         <a href="/" class="float-right">Reset all filters</a>
@@ -72,10 +99,10 @@ $airports = require './airports.php';
     <table class="table">
         <thead>
         <tr>
-            <th scope="col"><a href="#">Name</a></th>
-            <th scope="col"><a href="#">Code</a></th>
-            <th scope="col"><a href="#">State</a></th>
-            <th scope="col"><a href="#">City</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'name'] + $_GET) ?>">Name</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'code'] + $_GET) ?>">Code</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'state'] + $_GET) ?>">State</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'city'] + $_GET) ?>">City</a></th>
             <th scope="col">Address</th>
             <th scope="col">Timezone</th>
         </tr>
@@ -92,14 +119,16 @@ $airports = require './airports.php';
                i.e. if you have filter_by_first_letter set you can additionally use filter_by_state
         -->
         <?php foreach ($airports as $airport): ?>
-        <tr>
-            <td><?= $airport['name'] ?></td>
-            <td><?= $airport['code'] ?></td>
-            <td><a href="#"><?= $airport['state'] ?></a></td>
-            <td><?= $airport['city'] ?></td>
-            <td><?= $airport['address'] ?></td>
-            <td><?= $airport['timezone'] ?></td>
-        </tr>
+            <tr>
+                <td><?= $airport['name'] ?></td>
+                <td><?= $airport['code'] ?></td>
+                <td>
+                    <a href="?<?= http_build_query(['filter_by_state' => $airport['state'], 'page' => '1'] + $_GET) ?>"><?= $airport['state'] ?></a>
+                </td>
+                <td><?= $airport['city'] ?></td>
+                <td><?= $airport['address'] ?></td>
+                <td><?= $airport['timezone'] ?></td>
+            </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
@@ -115,9 +144,15 @@ $airports = require './airports.php';
     -->
     <nav aria-label="Navigation">
         <ul class="pagination justify-content-center">
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <?php for ($i = 1; $i <= $countPages; $i++): ?>
+                <?php if ($i == 1 || abs($currentPage - $i) < 10 || $i == $countPages) : ?>
+                    <li class="<?= $i == $currentPage ? 'page-item active' : 'page-item' ?>">
+                        <a class="page-link" href="?<?= http_build_query(['page' => $i] + $_GET) ?>"><?= $i ?></a>
+                    </li>
+                <?php elseif ($i === 2 || $i === $countPages - 1): ?>
+                    <li class="page-item"><a class="page-link">...</a></li>
+                <?php endif; ?>
+            <?php endfor; ?>
         </ul>
     </nav>
 
