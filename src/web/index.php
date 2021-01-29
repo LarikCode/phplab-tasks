@@ -149,7 +149,7 @@ $airports = array_slice($airports, ($currentPage - 1) * LENGTH, LENGTH);
                     <li class="<?= $i == $currentPage ? 'page-item active' : 'page-item' ?>">
                         <a class="page-link" href="?<?= http_build_query(['page' => $i] + $_GET) ?>"><?= $i ?></a>
                     </li>
-                <?php elseif ($i === 2 || $i === $countPages - 1): ?>
+                <?php elseif ($i == 2 || $i == $countPages - 1): ?>
                     <li class="page-item"><a class="page-link">...</a></li>
                 <?php endif; ?>
             <?php endfor; ?>
