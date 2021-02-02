@@ -3,7 +3,8 @@ require_once './functions.php';
 
 $airports = require './airports.php';
 
-const LENGTH = 5;
+const NUMBER_OF_RECORDS = 5;
+const PAGINATOR_WIDTH = 10;
 $currentPage = $_GET['page'] ?? 1;
 
 // Filtering
@@ -45,9 +46,9 @@ if (key_exists('sort', $_GET)) {
  * and apply pagination logic
  * (see Pagination task below)
  */
-$countPages = ceil(count($airports) / LENGTH);
+$countPages = ceil(count($airports) / NUMBER_OF_RECORDS);
 
-$airports = array_slice($airports, ($currentPage - 1) * LENGTH, LENGTH);
+$airports = array_slice($airports, ($currentPage - 1) * NUMBER_OF_RECORDS, NUMBER_OF_RECORDS);
 
 ?>
 <!doctype html>
@@ -145,7 +146,10 @@ $airports = array_slice($airports, ($currentPage - 1) * LENGTH, LENGTH);
     <nav aria-label="Navigation">
         <ul class="pagination justify-content-center">
             <?php for ($i = 1; $i <= $countPages; $i++): ?>
-                <?php if ($i == 1 || abs($currentPage - $i) < 10 || $i == $countPages) : ?>
+                <?php if ($i == 1 || abs($currentPage - $i) < PAGINATOR_WIDTH / 2 - 1
+                    || ($i < PAGINATOR_WIDTH && $currentPage <= PAGINATOR_WIDTH / 2 + 1)
+                    || ($i > $countPages - PAGINATOR_WIDTH + 1 && $currentPage >= $countPages - PAGINATOR_WIDTH / 2 )
+                    || $i == $countPages) : ?>
                     <li class="<?= $i == $currentPage ? 'page-item active' : 'page-item' ?>">
                         <a class="page-link" href="?<?= http_build_query(['page' => $i] + $_GET) ?>"><?= $i ?></a>
                     </li>
