@@ -40,8 +40,14 @@ function snakeCaseToCamelCase(string $input)
  */
 function mirrorMultibyteString(string $input)
 {
+    // Split the string into characters
     preg_match_all('/./us', $input, $ar);
-    return join(' ', array_reverse(mb_split(' ', join('', array_reverse($ar[0])))));
+
+    // Write all characters in reverse order
+    $str = join('', array_reverse($ar[0]));
+
+    // Write all words in reverse order and return the result
+    return join(' ', array_reverse(mb_split(' ', $str)));
 }
 
 /**
