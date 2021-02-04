@@ -4,7 +4,17 @@
 namespace src\oop\Commands;
 
 
-class MulCommand
+class MulCommand implements CommandInterface
 {
+    /**
+     * @inheritdoc
+     */
+    public function execute(...$args)
+    {
+        if (2 != sizeof($args)) {
+            throw new \InvalidArgumentException('Not enough parameters');
+        }
 
+        return $args[0] * $args[1];
+    }
 }
