@@ -10,7 +10,6 @@
  */
 function repeatArrayValues(array $input)
 {
-    // Formation of the result
     $result = [];
 
     // For each element, duplicate it the required number of times
@@ -21,7 +20,6 @@ function repeatArrayValues(array $input)
         }
     }
 
-    // Return the result
     return $result;
 }
 
@@ -35,13 +33,10 @@ function repeatArrayValues(array $input)
  */
 function getUniqueValue(array $input)
 {
-    // Sort the input array
     sort($input);
 
-    // Count the number of occurrences of each item
     $countValue = array_count_values($input);
 
-    // Sort by value keeping keys
     asort($countValue);
 
     // If the first value is 1, then the key is the smallest unique element
@@ -74,26 +69,19 @@ function getUniqueValue(array $input)
  */
 function groupByTag(array $input)
 {
-    // Formation of the result
     $result = [];
 
-    // The value with the key 'tags'
-    // becomes the keys of the resulting array
     foreach ($input as $key => $item) {
-        // check if the required keys are in the array
         if (array_key_exists('tags', $item) && array_key_exists('name', $item)) {
             foreach ($item['tags'] as $tag) {
-                // Add a new name element to the result
                 $result[$tag][] = $item['name'];
             }
         }
     }
 
-    // Sorting the result
-    foreach ($result as $key => $subarr) {
+    foreach ($result as $key => $value) {
         sort($result[$key]);
     }
 
-    // Return the result
     return $result;
 }
