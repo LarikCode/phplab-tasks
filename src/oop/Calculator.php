@@ -126,7 +126,6 @@ class Calculator
      */
     public function undo()
     {
-        // TODO implement undo logic here
         array_pop($this->intents);
 
         return $this;
@@ -139,8 +138,7 @@ class Calculator
      */
     public function replay()
     {
-        // TODO implement replay logic here
-        if(end($this->intents)){
+        if (count($this->intents) > 0) {
             $this->intents[] = end($this->intents);
         }
 
