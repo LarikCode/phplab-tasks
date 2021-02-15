@@ -16,7 +16,7 @@ function getUniqueFirstLetters(array $airports)
     foreach ($airports as $airport) {
         if (key_exists('name', $airport) && !in_array(substr($airport['name'], 0, 1), $firstLetters)) {
             $firstLetters[] = substr($airport['name'], 0, 1);
-        }elseif (!key_exists('name', $airport)){
+        } elseif (!key_exists('name', $airport)) {
             throw new InvalidArgumentException (
                 'getUniqueFirstLetters function only accepts array with key "name"'
             );
