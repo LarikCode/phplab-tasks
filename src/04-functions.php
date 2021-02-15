@@ -35,9 +35,9 @@ function sayHelloArgument($arg)
  */
 function sayHelloArgumentWrapper($arg)
 {
-    if(is_numeric($arg) || is_string($arg) || is_bool($arg)){
+    if (is_numeric($arg) || is_string($arg) || is_bool($arg)) {
         return sayHelloArgument($arg);
-    }else{
+    } else {
         throw new InvalidArgumentException (
             'sayHelloArgumentWrapper function only accepts a number, string or bool. Input was: ' . gettype($arg)
         );
@@ -53,7 +53,7 @@ function sayHelloArgumentWrapper($arg)
 function countArguments()
 {
     return [
-        'argument_count'  => func_num_args(),
+        'argument_count' => func_num_args(),
         'argument_values' => func_get_args(),
     ];
 }
@@ -73,8 +73,8 @@ function countArguments()
  */
 function countArgumentsWrapper()
 {
-    foreach (func_get_args() as $arg){
-        if(!is_string($arg)){
+    foreach (func_get_args() as $arg) {
+        if (!is_string($arg)) {
             throw new InvalidArgumentException (
                 'countArgumentsWrapper function only accepts a string. Input was: ' . gettype($arg)
             );
