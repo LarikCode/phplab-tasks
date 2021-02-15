@@ -73,7 +73,8 @@ function countArguments()
  */
 function countArgumentsWrapper()
 {
-    foreach (func_get_args() as $arg) {
+    $args = func_get_args();
+    foreach ($args as $arg) {
         if (!is_string($arg)) {
             throw new InvalidArgumentException (
                 'countArgumentsWrapper function only accepts a string. Input was: ' . gettype($arg)
@@ -81,5 +82,5 @@ function countArgumentsWrapper()
         }
     }
 
-    countArguments(...func_get_args());
+    countArguments(...$args);
 }
