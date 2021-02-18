@@ -96,7 +96,6 @@ $uniqueFirstLetters = $sth->fetchAll();
  */
 $airports = [];
 
-//$pdo->setAttribute(\PDO::MYSQL_ATTR_FOUND_ROWS);
 $sth = $pdo->prepare(sprintf($sql, NUMBER_OF_RECORDS, ($currentPage - 1) * NUMBER_OF_RECORDS));
 $sth->setFetchMode(\PDO::FETCH_ASSOC);
 $sth->execute(
