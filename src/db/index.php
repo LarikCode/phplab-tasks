@@ -8,7 +8,44 @@ require_once './pdo_ini.php';
 const NUMBER_OF_RECORDS = 5;
 const PAGINATOR_WIDTH = 10;
 $currentPage = $_GET['page'] ?? 1;
-$sql = '';
+
+$sql = <<<SQL
+SELECT
+	airports.id,
+    airports.name AS name,
+    address,
+    cities.name AS city,
+    code,
+    timezone,
+    states.name AS state
+FROM
+    airports
+INNER JOIN cities ON airports.cityId = cities.id
+INNER JOIN states ON airports.stateId = states.id
+WHERE
+    airports.name LIKE :name AND states.name LIKE :state
+ORDER BY
+    case :orderByCol
+            when 'name' then airports.name
+            when 'city' then city
+            when 'state' then state
+            when 'code' then code
+    end
+LIMIT %d
+OFFSET %d;
+SQL;
+
+$sqlCount = <<<SQL
+SELECT
+	COUNT(*)
+FROM
+    airports
+INNER JOIN cities ON airports.cityId = cities.id
+INNER JOIN states ON airports.stateId = states.id
+WHERE
+    airports.name LIKE :name AND states.name LIKE :state
+;
+SQL;
 
 /**
  * SELECT the list of unique first letters using https://www.w3resource.com/mysql/string-functions/mysql-left-function.php
@@ -30,9 +67,6 @@ $uniqueFirstLetters = $sth->fetchAll();
  * For filtering by state you will need to JOIN states table and check if states.name = A
  * where A - requested filter value
  */
-//if (key_exists('filter_by_first_letter', $_GET)) {
-//    $sql = 'SELECT * FROM airports '
-//}
 
 // Sorting
 /**
@@ -61,6 +95,30 @@ $uniqueFirstLetters = $sth->fetchAll();
  * For city_name and state_name fields you can use alias https://www.mysqltutorial.org/mysql-alias/
  */
 $airports = [];
+
+//$pdo->setAttribute(\PDO::MYSQL_ATTR_FOUND_ROWS);
+$sth = $pdo->prepare(sprintf($sql, NUMBER_OF_RECORDS, ($currentPage - 1) * NUMBER_OF_RECORDS));
+$sth->setFetchMode(\PDO::FETCH_ASSOC);
+$sth->execute(
+    [
+        'state' => ($_GET['filter_by_state'] ?? '%'),
+        'name' => ($_GET['filter_by_first_letter'] ?? '') . '%',
+        'orderByCol' => ($_GET['sort'] ?? '')
+    ]
+);
+
+$airports = $sth->fetchAll();
+
+$sth = $pdo->prepare($sqlCount);
+$sth->execute(
+    [
+        'state' => ($_GET['filter_by_state'] ?? '%'),
+        'name' => ($_GET['filter_by_first_letter'] ?? '') . '%'
+    ]
+);
+$sth->setFetchMode(\PDO::FETCH_COLUMN, 0);
+
+$countPages = ceil($sth->fetch()/ NUMBER_OF_RECORDS);
 ?>
 <!doctype html>
 <html lang="en">
@@ -70,7 +128,8 @@ $airports = [];
     <meta name="description" content="">
     <title>Airports</title>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 <body>
 <main role="main" class="container">
@@ -91,7 +150,7 @@ $airports = [];
         Filter by first letter:
 
         <?php foreach ($uniqueFirstLetters as $letter): ?>
-            <a href="#"><?= $letter ?></a>
+            <a href="/?<?= http_build_query(['filter_by_first_letter' => $letter, 'page' => '1'] + $_GET) ?>"><?= $letter ?></a>
         <?php endforeach; ?>
 
         <a href="/" class="float-right">Reset all filters</a>
@@ -110,10 +169,10 @@ $airports = [];
     <table class="table">
         <thead>
         <tr>
-            <th scope="col"><a href="#">Name</a></th>
-            <th scope="col"><a href="#">Code</a></th>
-            <th scope="col"><a href="#">State</a></th>
-            <th scope="col"><a href="#">City</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'name'] + $_GET) ?>">Name</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'code'] + $_GET) ?>">Code</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'state'] + $_GET) ?>">State</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'city'] + $_GET) ?>">City</a></th>
             <th scope="col">Address</th>
             <th scope="col">Timezone</th>
         </tr>
@@ -130,14 +189,16 @@ $airports = [];
                i.e. if you have filter_by_first_letter set you can additionally use filter_by_state
         -->
         <?php foreach ($airports as $airport): ?>
-        <tr>
-            <td><?= $airport['name'] ?></td>
-            <td><?= $airport['code'] ?></td>
-            <td><a href="#"><?= $airport['state_name'] ?></a></td>
-            <td><?= $airport['city_name'] ?></td>
-            <td><?= $airport['address'] ?></td>
-            <td><?= $airport['timezone'] ?></td>
-        </tr>
+            <tr>
+                <td><?= $airport['name'] ?></td>
+                <td><?= $airport['code'] ?></td>
+                <td>
+                    <a href="?<?= http_build_query(['filter_by_state' => $airport['state'], 'page' => '1'] + $_GET) ?>"><?= $airport['state'] ?></a>
+                </td>
+                <td><?= $airport['city'] ?></td>
+                <td><?= $airport['address'] ?></td>
+                <td><?= $airport['timezone'] ?></td>
+            </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
@@ -153,9 +214,18 @@ $airports = [];
     -->
     <nav aria-label="Navigation">
         <ul class="pagination justify-content-center">
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <?php for ($i = 1; $i <= $countPages; $i++): ?>
+                <?php if ($i == 1 || abs($currentPage - $i) < PAGINATOR_WIDTH / 2 - 1
+                    || ($i < PAGINATOR_WIDTH && $currentPage <= PAGINATOR_WIDTH / 2 + 1)
+                    || ($i > $countPages - PAGINATOR_WIDTH + 1 && $currentPage >= $countPages - PAGINATOR_WIDTH / 2)
+                    || $i == $countPages) : ?>
+                    <li class="<?= $i == $currentPage ? 'page-item active' : 'page-item' ?>">
+                        <a class="page-link" href="?<?= http_build_query(['page' => $i] + $_GET) ?>"><?= $i ?></a>
+                    </li>
+                <?php elseif ($i == 2 || $i == $countPages - 1): ?>
+                    <li class="page-item"><a class="page-link">...</a></li>
+                <?php endif; ?>
+            <?php endfor; ?>
         </ul>
     </nav>
 

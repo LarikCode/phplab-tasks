@@ -40,7 +40,7 @@ foreach (require_once('../web/airports.php') as $item) {
     $sth->execute(['name' => $item['state']]);
     $state = $sth->fetch();
 
-    // If result is empty - we need to INSERT city
+    // If result is empty - we need to INSERT state
     if (!$state) {
         $sth = $pdo->prepare('INSERT INTO states (name) VALUES (:name)');
         $sth->execute(['name' => $item['state']]);
@@ -54,13 +54,13 @@ foreach (require_once('../web/airports.php') as $item) {
 
     // TODO Airports
     // Airports
-    // To check if state with this name exists in the DB we need to SELECT it first
+    // To check if airport with this name exists in the DB we need to SELECT it first
     $sth = $pdo->prepare('SELECT id FROM airports WHERE name = :name');
     $sth->setFetchMode(\PDO::FETCH_ASSOC);
     $sth->execute(['name' => $item['name']]);
     $airport = $sth->fetch();
 
-    // If result is empty - we need to INSERT city
+    // If result is empty - we need to INSERT airport
     if (!$airport) {
         $sth = $pdo->prepare('INSERT INTO airports (name, code, address, timezone, cityId, stateId) 
             VALUES (:name, :code, :address, :timezone, :cityId, :stateId)');
