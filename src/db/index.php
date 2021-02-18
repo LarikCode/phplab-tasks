@@ -2,13 +2,23 @@
 /**
  * Connect to DB
  */
+/** @var \PDO $pdo */
+require_once './pdo_ini.php';
+
+const NUMBER_OF_RECORDS = 5;
+const PAGINATOR_WIDTH = 10;
+$currentPage = $_GET['page'] ?? 1;
+$sql = '';
 
 /**
  * SELECT the list of unique first letters using https://www.w3resource.com/mysql/string-functions/mysql-left-function.php
  * and https://www.w3resource.com/sql/select-statement/queries-with-distinct.php
  * and set the result to $uniqueFirstLetters variable
  */
-$uniqueFirstLetters = ['A', 'B', 'C'];
+$sth = $pdo->prepare('SELECT DISTINCT SUBSTRING(name, 1, 1) AS Letter FROM cities ORDER BY Letter;');
+$sth->setFetchMode(\PDO::FETCH_COLUMN, 0);
+$sth->execute();
+$uniqueFirstLetters = $sth->fetchAll();
 
 // Filtering
 /**
@@ -20,6 +30,9 @@ $uniqueFirstLetters = ['A', 'B', 'C'];
  * For filtering by state you will need to JOIN states table and check if states.name = A
  * where A - requested filter value
  */
+//if (key_exists('filter_by_first_letter', $_GET)) {
+//    $sql = 'SELECT * FROM airports '
+//}
 
 // Sorting
 /**
