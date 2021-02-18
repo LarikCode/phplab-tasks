@@ -55,9 +55,9 @@ foreach (require_once('../web/airports.php') as $item) {
     // TODO Airports
     // Airports
     // To check if airport with this name exists in the DB we need to SELECT it first
-    $sth = $pdo->prepare('SELECT id FROM airports WHERE name = :name');
+    $sth = $pdo->prepare('SELECT id FROM airports WHERE code = :code');
     $sth->setFetchMode(\PDO::FETCH_ASSOC);
-    $sth->execute(['name' => $item['name']]);
+    $sth->execute(['code' => $item['code']]);
     $airport = $sth->fetch();
 
     // If result is empty - we need to INSERT airport
@@ -74,7 +74,6 @@ foreach (require_once('../web/airports.php') as $item) {
                 'stateId' => $stateId
             ]
         );
-
         // We will use this variable to INSERT airport
         $airportId = $pdo->lastInsertId();
     } else {

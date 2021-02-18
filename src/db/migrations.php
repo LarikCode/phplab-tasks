@@ -48,9 +48,9 @@ $pdo->exec($sql);
 $sql = <<<'SQL'
 CREATE TABLE `airports` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`code` VARCHAR(3) NOT NULL COLLATE 'utf8_general_ci',
-	`address` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
+	`name` VARCHAR(100) NOT NULL COLLATE 'utf8_general_ci',
+	`code` VARCHAR(10) NOT NULL COLLATE 'utf8_general_ci',
+	`address` VARCHAR(120) NOT NULL COLLATE 'utf8_general_ci',
 	`timezone` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
 	`cityId` INT(10) UNSIGNED NOT NULL,
 	`stateId` INT(10) UNSIGNED NOT NULL,
